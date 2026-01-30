@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: hnb-family-api
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DBURI
+        sync: false
+      - key: JWTSECRETKEY
+        sync: false
+      - key: FAMILYNAMES
+        sync: false
+      - key: ADMINNAMES
+        sync: false
+      - key: EMAIL
+        sync: false
+      - key: EMAILPASS
+        sync: false
+      - key: BASE_URL
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false

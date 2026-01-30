@@ -1,0 +1,12 @@
+node_modules
+.prettierrc
+.vscode
+.mjs
+package-lock.json
+.DS_Store
+dist
+.env
+logs
+npm-debug.log*
+tsconfig.build.json
+node_modules

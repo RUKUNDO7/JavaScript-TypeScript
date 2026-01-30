@@ -1,0 +1,31 @@
+{
+  "name": "create-project",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "bin": {
+    "create-project": "bin/create-project"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "keywords": [
+    "cli",
+    "create-project"
+  ],
+  "author": "",
+  "license": "ISC",
+  "description": "A CLI project",
+  "dependencies": {
+    "arg": "^5.0.2",
+    "chalk": "^5.6.2",
+    "execa": "^9.6.0",
+    "inquirer": "^12.9.4",
+    "listr": "^0.14.3",
+    "ncp": "^2.0.0",
+    "pkg-install": "^1.0.0"
+  }
+}

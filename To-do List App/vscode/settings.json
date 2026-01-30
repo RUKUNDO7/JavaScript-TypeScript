@@ -1,0 +1,17 @@
+{
+  // Force VS Code to use the TypeScript version installed in your project
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+
+  // Enable strict TypeScript checking (optional, recommended)
+  "typescript.validate.enable": true,
+
+  // Suppress deprecation warnings from TypeScript 6+ (editor-only)
+  "typescript.reportStyleChecksAsWarnings": true,
+
+  // Optional: hide deprecated package warnings in the output (makes console cleaner)
+  "npm.exclude": ["node_modules"],
+
+  // Optional: enable auto-restart of TS server when config changes
+  "typescript.tsserver.experimental.enableProjectDiagnostics": true
+}

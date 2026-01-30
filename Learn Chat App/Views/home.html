@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .nav-link {
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #3b82f6;
+        }
+        .hero-container {
+            transition: all 0.3s ease-in-out;
+        }
+        .hero-container:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+    <nav class="bg-white shadow-md py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold text-gray-800">Welcome</h1>
+            <ul class="flex space-x-6">
+                <li><a href="#" class="nav-link text-gray-600 hover:text-blue-500">Home</a></li>
+                <li><a href="signup.html" class="nav-link text-gray-600 hover:text-blue-500">Sign Up</a></li>
+                <li><a href="login.html" class="nav-link text-gray-600 hover:text-blue-500">Log In</a></li>
+            </ul>
+        </div>
+    </nav>
+    <main class="flex-grow flex items-center justify-center py-12">
+        <div class="hero-container bg-white p-8 rounded-lg shadow-lg text-center max-w-lg mx-4">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">Let's Get Started</h2>
+            <p class="text-gray-600 mb-6">Join us today and explore a world of possibilities. Sign up or log in to begin your journey!</p>
+            <div class="space-x-4">
+                <a href="signup.html" class="inline-block bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition">Sign Up</a>
+                <a href="login.html" class="inline-block bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300 transition">Log In</a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
