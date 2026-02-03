@@ -1,6 +1,11 @@
-import { IsBoolean } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class UpdateTodoDto {
+    @IsOptional()
     @IsBoolean()
-    completed!: boolean;
+    completed?: boolean;
+
+    @IsOptional()
+    @IsString()
+    title?: string;
 }

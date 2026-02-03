@@ -31,7 +31,7 @@ export class TodosController {
         update(
             @Param('id', ParseIntPipe) id: number, 
             @Body() updateTodoDto: UpdateTodoDto) {
-            return this.todosService.updateById(id, updateTodoDto.completed);
+            return this.todosService.updateById(id, updateTodoDto);
         }
 
         @Put('title/:title')
@@ -39,7 +39,7 @@ export class TodosController {
             @Param('title') title: string,
             @Body() updateTodoDto: UpdateTodoDto
         ) {
-            return this.todosService.updateByTitle(title, updateTodoDto.completed);
+            return this.todosService.updateByTitle(title, updateTodoDto);
         }
 
         @Delete('id/:id')
