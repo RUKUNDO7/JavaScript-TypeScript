@@ -1,5 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Pool } from 'pg';
+import { NotFoundException } from '@nestjs/common';
 
 
 @Injectable()
@@ -20,6 +21,14 @@ export class TodosService {
     async findAll() {
         const res = await this.db.query('SELECT * FROM todos ORDER BY id ASC');
         return res.rows;
+    }
+
+    async findOne(id: number) {
+        const res = await this.db.query('SELECT * FROM todos WHERE id = $1', [id]);
+        if (res.rows.length === 0) {
+            throw new NotFoundException(`Todo with id ${id} not found`);
+        }
+        return res.rows[0];
     }
 
     async update(id: number, completed: boolean) {
