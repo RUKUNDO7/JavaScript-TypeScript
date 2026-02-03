@@ -17,20 +17,38 @@ export class TodosController {
             return this.todosService.findAll();
         }
 
-        @Get(':id') 
+        @Get('id/:id') 
         getTodoById(@Param('id', ParseIntPipe) id: number) {
-            return this.todosService.findOne(id);
+            return this.todosService.findById(id);
         }
 
-        @Put(':id')
+        @Get('title/:title')
+        getTodoByTitle(@Param('title') title: string) {
+            return this.todosService.findByTitle(title);
+        }
+
+        @Put('id/:id')
         update(
             @Param('id', ParseIntPipe) id: number, 
             @Body() updateTodoDto: UpdateTodoDto) {
-            return this.todosService.update(id, updateTodoDto.completed);
+            return this.todosService.updateById(id, updateTodoDto.completed);
         }
 
-        @Delete(':id')
+        @Put('title/:title')
+        updateByTitle(
+            @Param('title') title: string,
+            @Body() updateTodoDto: UpdateTodoDto
+        ) {
+            return this.todosService.updateByTitle(title, updateTodoDto.completed);
+        }
+
+        @Delete('id/:id')
         remove(@Param('id') id: number) {
-            return this.todosService.delete(id);
+            return this.todosService.deleteById(id);
+        }
+
+        @Delete('title/:title')
+        deleteByTitle(@Param('title') title: string) {
+            return this.todosService.deleteByTitle(title);
         }
     }
