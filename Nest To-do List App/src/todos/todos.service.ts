@@ -13,7 +13,7 @@ export class TodosService {
 
     async create(title: string) {
         const res = await this.db.query(
-            'INSERT INTO todos(title, completed) VALUES($1, $2) RETURNING *',
+            'INSERT INTO todos(title, status) VALUES($1, $2) RETURNING *',
             [title, false],
         );
         return res.rows[0];
@@ -51,9 +51,9 @@ export class TodosService {
         const values: any[] = [];
         let index = 1;
 
-        if (updateTodoDto.completed !== undefined) {
+        if (updateTodoDto.status !== undefined) {
             fields.push(`completed = $${index++}`);
-            values.push(updateTodoDto.completed);
+            values.push(updateTodoDto.status);
         }
 
         if (updateTodoDto.title !== undefined) {
@@ -82,9 +82,9 @@ export class TodosService {
         const values: any[] = [];
         let index = 1;
 
-        if (updateTodoDto.completed !== undefined) {
+        if (updateTodoDto.status !== undefined) {
             fields.push(`completed = $${index++}`);
-            values.push(updateTodoDto.completed);
+            values.push(updateTodoDto.status);
         }
 
         if (updateTodoDto.title !== undefined) {
