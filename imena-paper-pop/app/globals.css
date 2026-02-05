@@ -1,26 +1,86 @@
 @import "tailwindcss";
 
+/* ===============================
+   🎨 DESIGN SYSTEM (Hackathon UI)
+   =============================== */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Base Next theme vars */
+  --background: #f8fafc;
+  --foreground: #0f172a;
+
+  /* Brand palette */
+  --primary: #0f172a;   /* deep navy */
+  --secondary: #1e293b; /* slate */
+  --accent: #e11d48;    /* rose */
+  --gold: #c6a55c;      /* luxury gold */
+  --muted: #64748b;
+
+  /* Fonts */
+  --font-body: Arial, Helvetica, sans-serif;
+  --font-heading: Georgia, "Times New Roman", serif;
 }
 
+/* Tailwind theme mapping */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-body);
   --font-mono: var(--font-geist-mono);
 }
 
+/* Dark mode support (still nice if user has dark OS) */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #020617;
+    --foreground: #f1f5f9;
   }
 }
+
+/* ===============================
+   Global Base Styles
+   =============================== */
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+}
+
+/* Headings feel premium for invitations */
+h1, h2, h3 {
+  font-family: var(--font-heading);
+  letter-spacing: 0.02em;
+}
+
+/* Smooth text rendering */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===============================
+   🖨️ PRINT MODE (PDF Export)
+   Only print invitation preview
+   =============================== */
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .print-area, .print-area * {
+    visibility: visible;
+  }
+
+  .print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  body {
+    background: white;
+  }
 }
