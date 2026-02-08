@@ -25,7 +25,7 @@ export default function InvitationPreview({ data }: { data: InvitationData }) {
       accent: "text-[#96712F]",
       border: "border-white/10",
       font: "font-serif",
-      officialSlogan: "Learn from the past, live for today, hope for tomorrow. Ba umwana mu gihe ukina, umugabo mu gihe ukora, kora igikwiye mu gihe gikwiye ikizere hope family."
+      officialSlogan: "Learn from the past, live for today, hope for tomorrow. Ba umwana mu gihe ukina, umugabo mu gihe ukora, kora igikwiye mu gihe gikwiye, ikizere hope family."
     }
   };
 

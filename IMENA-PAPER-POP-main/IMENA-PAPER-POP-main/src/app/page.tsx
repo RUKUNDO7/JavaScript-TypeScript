@@ -1,4 +1,5 @@
 import { ArrowDown, CheckCircle2 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
@@ -57,7 +58,14 @@ export default function Home() {
         {/* 3. HERO CONTENT */}
         <section className="relative z-10 flex flex-col items-center text-center px-6 max-w-5xl">
           <div className="mb-8 inline-flex items-center gap-3 bg-white border border-[#96712F]/20 px-4 py-2 rounded-full shadow-sm">
-             <div className="w-6 h-6 bg-[#153273] rounded-full flex items-center justify-center text-[10px] text-white font-bold">I</div>
+             <div className="relative w-6 h-6 rounded-full bg-white border border-[#153273]/10 flex items-center justify-center">
+               <Image
+                 src="/IMENA.png"
+                 alt="Imena Logo"
+                 fill
+                 className="object-contain p-[2px]"
+               />
+             </div>
              <span className="text-[9px] font-bold tracking-widest text-[#96712F] uppercase">Imena Paper Pop</span>
           </div>
 
