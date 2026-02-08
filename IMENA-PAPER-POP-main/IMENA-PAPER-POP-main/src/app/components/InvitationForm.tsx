@@ -25,7 +25,7 @@ export default function InvitationForm({ data, setData }: FormProps) {
     setData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const labelStyle = "text-[10px] font-bold tracking-[0.2em] text-[#96712F] uppercase mb-2 block";
+  const labelStyle = "text-[11px] font-semibold tracking-[0.08em] text-[#96712F] mb-2 block";
   const inputStyle = "w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-sm focus:border-[#96712F] outline-none transition-all placeholder:text-slate-900 placeholder:opacity-100";
   const btnClass = (active: boolean) => 
     `flex-1 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all border ${
@@ -50,7 +50,7 @@ export default function InvitationForm({ data, setData }: FormProps) {
 
       {/* 2. Sub-Family Selection */}
       <div>
-        <label className={labelStyle}>Select Sub-Family</label>
+        <label className={labelStyle}>Select sub-family</label>
         <select 
           name="subFamily" 
           value={data.subFamily} 
@@ -66,7 +66,7 @@ export default function InvitationForm({ data, setData }: FormProps) {
       {/* 3. Event Title */}
       <div>
         <label className={labelStyle}>
-          {data.category === 'Birthdays' ? "Birthday Name" : "Event Title"}
+          {data.category === 'Birthdays' ? "Birthday name" : "Event title"}
         </label>
         <input name="title" value={data.title} onChange={handleChange} className={inputStyle} placeholder="e.g. Amahoro's 5th Birthday" />
       </div>
@@ -74,7 +74,7 @@ export default function InvitationForm({ data, setData }: FormProps) {
       {/* 4. Conditional Slogan/Wishes */}
       <div>
         <label className={labelStyle}>
-          {data.category === 'Birthdays' ? "Birthday Wishes" : "Description / Slogan"}
+          {data.category === 'Birthdays' ? "Birthday wishes" : "Event description"}
         </label>
         <textarea 
           name="slogan" 
@@ -129,7 +129,7 @@ export default function InvitationForm({ data, setData }: FormProps) {
 
       {/* 7. Additional Notes */}
       <div>
-        <label className={labelStyle}>Additional Notes</label>
+        <label className={labelStyle}>Additional notes</label>
         <textarea 
           name="additionalNotes" 
           value={data.additionalNotes} 

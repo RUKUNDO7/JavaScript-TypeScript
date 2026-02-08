@@ -69,6 +69,26 @@ async function readRecordByFilename(filename: string): Promise<StoredInvitation 
   }
 }
 
+async function findRecordByScan(token: string): Promise<StoredInvitation | null> {
+  try {
+    const files = await fs.readdir(dataDir);
+    for (const file of files) {
+      if (!file.endsWith(".json")) continue;
+      const content = await fs.readFile(path.join(dataDir, file), "utf8");
+      const record = JSON.parse(content) as StoredInvitation;
+      if (record.id === token || record.slug === token) {
+        return record;
+      }
+    }
+    return null;
+  } catch (err: unknown) {
+    if (typeof err === "object" && err && "code" in err && (err as { code: string }).code === "ENOENT") {
+      return null;
+    }
+    throw err;
+  }
+}
+
 export async function getInvitationBySlug(slug: string): Promise<StoredInvitation | null> {
   const bySlug = await readRecordByFilename(`${slug}.json`);
   if (bySlug) return bySlug;
@@ -78,5 +98,5 @@ export async function getInvitationBySlug(slug: string): Promise<StoredInvitatio
     if (byId) return byId;
   }
 
-  return null;
+  return findRecordByScan(slug);
 }

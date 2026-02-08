@@ -9,7 +9,7 @@ export default function InvitationPreview({ data }: { data: InvitationData }) {
     Wihogora: {
       container: "bg-[#FDFCFB] text-[#153273]",
       accent: "text-[#96712F]",
-      border: "border-[#96712F]/30",
+      border: "border-[rgba(150,113,47,0.3)]",
       font: "font-serif",
       officialSlogan: "ndi umurinzi w' igihango, usigasira ibyagezwemo, akirinda amacakubiri, akimakaza amahoro, kuko ari we wihogora. Rooted in love, rising in life, resilience is our might"
     },
@@ -23,7 +23,7 @@ export default function InvitationPreview({ data }: { data: InvitationData }) {
     Hope: {
       container: "bg-[#153273] text-white",
       accent: "text-[#96712F]",
-      border: "border-white/10",
+      border: "border-[rgba(255,255,255,0.1)]",
       font: "font-serif",
       officialSlogan: "Learn from the past, live for today, hope for tomorrow. Ba umwana mu gihe ukina, umugabo mu gihe ukora, kora igikwiye mu gihe gikwiye, ikizere hope family."
     }
@@ -33,10 +33,14 @@ export default function InvitationPreview({ data }: { data: InvitationData }) {
   const contentTextClass =
     data.subFamily === "Hope" ? "text-white" : "text-[#153273]";
   const mutedTextClass =
-    data.subFamily === "Hope" ? "text-white/90" : "text-[#153273]/90";
+    data.subFamily === "Hope" ? "text-[rgba(255,255,255,0.9)]" : "text-[rgba(21,50,115,0.9)]";
   const subtleTextClass =
-    data.subFamily === "Hope" ? "text-white/80" : "text-[#153273]/80";
-  const agendaItems = data.agenda
+    data.subFamily === "Hope" ? "text-[rgba(255,255,255,0.8)]" : "text-[rgba(21,50,115,0.8)]";
+  const agendaItems = (data.agenda ?? "")
+    .split(/\r?\n|•|,|;/g)
+    .map((item) => item.trim())
+    .filter(Boolean);
+  const notesItems = (data.additionalNotes ?? "")
     .split(/\r?\n|•|,|;/g)
     .map((item) => item.trim())
     .filter(Boolean);
@@ -68,8 +72,7 @@ export default function InvitationPreview({ data }: { data: InvitationData }) {
   return (
     <div id="printable-invitation" className={`invitation-theme w-full aspect-[1/1.41] ${style.container} shadow-2xl relative p-12 flex flex-col items-center justify-start text-center transition-all duration-700`}>
       
-      {/* Internal Frame */}
-      <div className={`absolute inset-6 border ${style.border} pointer-events-none`} />
+      {/* Internal Frame removed */}
 
       {/* 1. THE LOGO */}
       <div className="relative z-10 w-20 h-20 mb-6">
@@ -95,7 +98,9 @@ export default function InvitationPreview({ data }: { data: InvitationData }) {
           {data.title || (data.category === 'Birthdays' ? "Birthday Celebration" : "Family Announcement")}
         </h2>
 
-        <div className={`w-10 h-[1px] ${data.subFamily === 'Hope' ? 'bg-white/30' : 'bg-black/10'} mb-6`} />
+        <div
+          className={`w-10 h-[1px] ${data.subFamily === 'Hope' ? 'bg-[rgba(255,255,255,0.3)]' : 'bg-[rgba(0,0,0,0.1)]'} mb-6`}
+        />
 
         {/* Date / Time / Location */}
         {(data.date || data.time || data.location) ? (
@@ -120,7 +125,10 @@ export default function InvitationPreview({ data }: { data: InvitationData }) {
         ) : null}
 
         {/* User-generated Description / Wishes */}
-        <p className={`text-base md:text-lg leading-relaxed italic ${mutedTextClass} ${style.font} max-w-[280px]`}>
+        <p
+          className={`text-base md:text-lg leading-relaxed italic ${mutedTextClass} ${style.font} max-w-[280px] break-words overflow-hidden`}
+          style={{ display: "-webkit-box", WebkitLineClamp: 4, WebkitBoxOrient: "vertical" }}
+        >
           "{toSentenceCase(data.slogan || (data.category === 'Birthdays' ? "Wishing you a year of infinite blessings." : "United in Celebration."))}"
         </p>
 
@@ -139,13 +147,15 @@ export default function InvitationPreview({ data }: { data: InvitationData }) {
         ) : null}
 
         {/* Additional Notes */}
-        {data.additionalNotes ? (
+        {notesItems.length ? (
           <div className="mt-4 max-w-[280px]">
             <p className={`text-[10px] font-bold uppercase tracking-[0.3em] ${subtleTextClass} ${style.font}`}>
               Notes
             </p>
-            <ul className={`mt-2 text-[12px] italic tracking-[0.02em] ${mutedTextClass} ${style.font} list-disc list-inside`}>
-              <li>{toSentenceCase(data.additionalNotes)}</li>
+            <ul className={`mt-2 text-[12px] italic tracking-[0.02em] ${mutedTextClass} ${style.font} list-disc list-inside space-y-1`}>
+              {notesItems.map((item, index) => (
+                <li key={`${item}-${index}`}>{toSentenceCase(item)}</li>
+              ))}
             </ul>
           </div>
         ) : null}

@@ -67,9 +67,28 @@ export default function GeneratorPage() {
       setExportError(null);
       const removeGuides = addBleedGuides(target);
 
+      const images = Array.from(target.querySelectorAll("img"));
+      await Promise.all(
+        images.map(
+          (img) =>
+            new Promise<void>((resolve) => {
+              if (img.complete) {
+                resolve();
+                return;
+              }
+              img.onload = () => resolve();
+              img.onerror = () => resolve();
+            })
+        )
+      );
+      if ("fonts" in document) {
+        await (document as Document & { fonts: FontFaceSet }).fonts.ready;
+      }
+
       const canvas = await html2canvas(target, {
         scale: 2,
         useCORS: true,
+        allowTaint: true,
         backgroundColor: "#ffffff",
       });
       removeGuides();
@@ -83,7 +102,7 @@ export default function GeneratorPage() {
       pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
       pdf.save("imena-invitation.pdf");
     } catch (err) {
-      setExportError("Export failed. Please try again.");
+      setExportError(err instanceof Error ? err.message : "Export failed. Please try again.");
     } finally {
       setIsExporting(false);
     }
@@ -98,19 +117,44 @@ export default function GeneratorPage() {
       setIsExporting(true);
       setExportError(null);
       const removeGuides = addBleedGuides(target);
+      const images = Array.from(target.querySelectorAll("img"));
+      await Promise.all(
+        images.map(
+          (img) =>
+            new Promise<void>((resolve) => {
+              if (img.complete) {
+                resolve();
+                return;
+              }
+              img.onload = () => resolve();
+              img.onerror = () => resolve();
+            })
+        )
+      );
+      if ("fonts" in document) {
+        await (document as Document & { fonts: FontFaceSet }).fonts.ready;
+      }
       const canvas = await html2canvas(target, {
         scale: 2,
         useCORS: true,
+        allowTaint: true,
         backgroundColor: "#ffffff",
       });
       removeGuides();
-      const dataUrl = canvas.toDataURL("image/png");
-      const link = document.createElement("a");
-      link.href = dataUrl;
-      link.download = "imena-invitation.png";
-      link.click();
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          setExportError("Download failed. Please try again.");
+          return;
+        }
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "imena-invitation.png";
+        link.click();
+        URL.revokeObjectURL(url);
+      }, "image/png");
     } catch (err) {
-      setExportError("Download failed. Please try again.");
+      setExportError(err instanceof Error ? err.message : "Download failed. Please try again.");
     } finally {
       setIsExporting(false);
     }
