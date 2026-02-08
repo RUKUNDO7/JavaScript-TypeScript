@@ -52,6 +52,18 @@ export default function InvitationPreview({ data }: { data: InvitationData }) {
     const date = new Date(2000, 0, 1, h, m);
     return date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
   };
+  const formatDateWithOrdinal = (dateValue: string) => {
+    if (!dateValue) return "";
+    const date = new Date(dateValue);
+    if (Number.isNaN(date.getTime())) return dateValue;
+    const day = date.getDate();
+    const monthYear = date.toLocaleDateString("en-GB", { month: "long", year: "numeric" });
+    const suffix = day % 10 === 1 && day % 100 !== 11 ? "st"
+      : day % 10 === 2 && day % 100 !== 12 ? "nd"
+      : day % 10 === 3 && day % 100 !== 13 ? "rd"
+      : "th";
+    return `${day}${suffix} ${monthYear}`;
+  };
 
   return (
     <div id="printable-invitation" className={`invitation-theme w-full aspect-[1/1.41] ${style.container} shadow-2xl relative p-12 flex flex-col items-center justify-start text-center transition-all duration-700`}>
@@ -85,6 +97,28 @@ export default function InvitationPreview({ data }: { data: InvitationData }) {
 
         <div className={`w-10 h-[1px] ${data.subFamily === 'Hope' ? 'bg-white/30' : 'bg-black/10'} mb-6`} />
 
+        {/* Date / Time / Location */}
+        {(data.date || data.time || data.location) ? (
+          <div className="mb-6 space-y-2">
+            {data.date ? (
+              <p className={`text-[12px] font-bold tracking-[0.15em] uppercase ${contentTextClass}`}>
+                On the {formatDateWithOrdinal(data.date)}
+              </p>
+            ) : null}
+            {data.time ? (
+              <p className={`text-[11px] font-bold tracking-[0.18em] uppercase ${mutedTextClass}`}>
+                At {formatTime(data.time)}
+              </p>
+            ) : null}
+            {data.location ? (
+              <p className={`text-[11px] font-bold tracking-[0.18em] uppercase ${mutedTextClass} flex items-center justify-center gap-2`}>
+                <MapPin size={12} />
+                {data.location}
+              </p>
+            ) : null}
+          </div>
+        ) : null}
+
         {/* User-generated Description / Wishes */}
         <p className={`text-base md:text-lg leading-relaxed italic ${mutedTextClass} ${style.font} max-w-[280px]`}>
           "{toSentenceCase(data.slogan || (data.category === 'Birthdays' ? "Wishing you a year of infinite blessings." : "United in Celebration."))}"
@@ -115,31 +149,6 @@ export default function InvitationPreview({ data }: { data: InvitationData }) {
             </ul>
           </div>
         ) : null}
-
-        {/* Logistics for Announcements */}
-        {data.category === 'Announcements' && data.date && (
-          <div className="mt-10 space-y-2">
-            <p className={`font-bold tracking-tighter text-xl ${contentTextClass}`}>
-              {new Date(data.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-            </p>
-
-            {(data.time || data.location) ? (
-              <div className={`flex items-center justify-center gap-2 text-[10px] uppercase tracking-[0.2em] font-bold ${mutedTextClass}`}>
-                {data.time ? (
-                  <span className={`px-3 py-1 rounded-full ${data.subFamily === "Hope" ? "bg-white/15 text-white" : "bg-[#153273]/15 text-[#153273]"}`}>
-                    {formatTime(data.time)}
-                  </span>
-                ) : null}
-                {data.location ? (
-                  <span className={`px-3 py-1 rounded-full flex items-center gap-1 ${data.subFamily === "Hope" ? "bg-white/15 text-white" : "bg-[#153273]/15 text-[#153273]"}`}>
-                    <MapPin size={12} />
-                    {data.location}
-                  </span>
-                ) : null}
-              </div>
-            ) : null}
-          </div>
-        )}
       </div>
 
       {/* 3. FOOTER WITH OFFICIAL FAMILY SLOGAN */}
