@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+/* Ensure these are at the bottom of the file */
+.border-gold-stroke {
+  -webkit-text-stroke: 1px rgba(150, 113, 47, 0.2);
+}
+
+@keyframes background-crawl {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-background-crawl {
+  animation: background-crawl 80s linear infinite;
+}
+/* Add/Replace these in your globals.css */
+
+/* src/app/globals.css */
+
+/* src/app/globals.css */
+
+/* src/app/globals.css */
+
+.border-gold-glow {
+  /* Increased opacity to 0.4 for better visibility while staying 'light' */
+  -webkit-text-stroke: 2px rgba(150, 113, 47, 0.4); 
+  
+  /* Subtle glow to make the outline 'pop' against the #F9FAFB background */
+  text-shadow: 0 0 20px rgba(150, 113, 47, 0.15); 
+  
+  /* Ensure the font weight remains heavy for architectural impact */
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+@keyframes background-crawl {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-background-crawl {
+  /* 120s is a luxurious, slow crawl that feels more 'premium' */
+  animation: background-crawl 120s linear infinite; 
+}
+
+@media print {
+  /* Hide everything on the page */
+  body * {
+    visibility: hidden;
+  }
+  
+  /* Show only the invitation and its children */
+  #printable-invitation, #printable-invitation * {
+    visibility: visible;
+  }
+
+  /* Position it at the very top-left of the paper */
+  #printable-invitation {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    box-shadow: none !important; /* Remove shadows for clean printing */
+    border: none !important;
+  }
+}
