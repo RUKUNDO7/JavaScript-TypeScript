@@ -155,7 +155,7 @@ export default function InvitationPreview({ data }: { data: InvitationData }) {
       <div className="mt-auto pt-8 flex flex-col items-center">
         <div className={`w-8 h-[1px] ${style.accent} opacity-30 mb-4`} />
         <p className={`text-[10px] tracking-[0.12em] italic max-w-[300px] leading-loose ${mutedTextClass} mb-2`}>
-          "{toSentenceCase(style.officialSlogan)}"
+          "{style.officialSlogan}"
         </p>
         <p className={`text-xl ${style.font} italic ${style.accent}`}>
           Imena Family
