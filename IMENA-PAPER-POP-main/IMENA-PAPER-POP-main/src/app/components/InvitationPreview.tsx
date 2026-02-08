@@ -138,9 +138,9 @@ export default function InvitationPreview({ data }: { data: InvitationData }) {
             <p className={`text-[10px] font-bold uppercase tracking-[0.3em] ${subtleTextClass} ${style.font}`}>
               Agenda
             </p>
-            <ul className={`mt-2 text-[12px] italic tracking-[0.02em] ${mutedTextClass} ${style.font} space-y-1 list-disc list-inside`}>
+            <ul className={`mt-2 text-[12px] italic tracking-[0.02em] ${mutedTextClass} ${style.font} space-y-1 list-none`}>
               {agendaItems.map((item, index) => (
-                <li key={`${item}-${index}`}>{toSentenceCase(item)}</li>
+                <li key={`${item}-${index}`}>• {toSentenceCase(item)}</li>
               ))}
             </ul>
           </div>
@@ -152,9 +152,9 @@ export default function InvitationPreview({ data }: { data: InvitationData }) {
             <p className={`text-[10px] font-bold uppercase tracking-[0.3em] ${subtleTextClass} ${style.font}`}>
               Notes
             </p>
-            <ul className={`mt-2 text-[12px] italic tracking-[0.02em] ${mutedTextClass} ${style.font} list-disc list-inside space-y-1`}>
+            <ul className={`mt-2 text-[12px] italic tracking-[0.02em] ${mutedTextClass} ${style.font} list-none space-y-1`}>
               {notesItems.map((item, index) => (
-                <li key={`${item}-${index}`}>{toSentenceCase(item)}</li>
+                <li key={`${item}-${index}`}>• {toSentenceCase(item)}</li>
               ))}
             </ul>
           </div>

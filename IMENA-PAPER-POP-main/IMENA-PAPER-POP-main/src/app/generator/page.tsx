@@ -32,29 +32,8 @@ export default function GeneratorPage() {
   const [exportError, setExportError] = useState<string | null>(null);
   const [isDownloadOpen, setIsDownloadOpen] = useState(false);
 
-  const addBleedGuides = (target: HTMLElement) => {
-    const overlay = document.createElement("div");
-    overlay.setAttribute("data-export-guides", "true");
-    overlay.style.position = "absolute";
-    overlay.style.inset = "0";
-    overlay.style.pointerEvents = "none";
-    overlay.style.zIndex = "50";
-
-    const bleed = document.createElement("div");
-    bleed.style.position = "absolute";
-    bleed.style.inset = "12px";
-    bleed.style.border = "1px dashed rgba(21, 50, 115, 0.35)";
-
-    const safe = document.createElement("div");
-    safe.style.position = "absolute";
-    safe.style.inset = "36px";
-    safe.style.border = "1px dashed rgba(150, 113, 47, 0.45)";
-
-    overlay.appendChild(bleed);
-    overlay.appendChild(safe);
-    target.appendChild(overlay);
-
-    return () => overlay.remove();
+  const addBleedGuides = (_target: HTMLElement) => {
+    return () => {};
   };
 
   const handleExportPdf = async () => {
@@ -62,10 +41,11 @@ export default function GeneratorPage() {
     const target = document.getElementById("printable-invitation");
     if (!target) return;
 
+    let removeGuides: (() => void) | null = null;
     try {
       setIsExporting(true);
       setExportError(null);
-      const removeGuides = addBleedGuides(target);
+      removeGuides = addBleedGuides(target);
 
       const images = Array.from(target.querySelectorAll("img"));
       await Promise.all(
@@ -91,7 +71,6 @@ export default function GeneratorPage() {
         allowTaint: true,
         backgroundColor: "#ffffff",
       });
-      removeGuides();
       const imgData = canvas.toDataURL("image/png");
 
       const pdf = new jsPDF({
@@ -104,6 +83,7 @@ export default function GeneratorPage() {
     } catch (err) {
       setExportError(err instanceof Error ? err.message : "Export failed. Please try again.");
     } finally {
+      if (removeGuides) removeGuides();
       setIsExporting(false);
     }
   };
@@ -113,10 +93,11 @@ export default function GeneratorPage() {
     const target = document.getElementById("printable-invitation");
     if (!target) return;
 
+    let removeGuides: (() => void) | null = null;
     try {
       setIsExporting(true);
       setExportError(null);
-      const removeGuides = addBleedGuides(target);
+      removeGuides = addBleedGuides(target);
       const images = Array.from(target.querySelectorAll("img"));
       await Promise.all(
         images.map(
@@ -140,7 +121,6 @@ export default function GeneratorPage() {
         allowTaint: true,
         backgroundColor: "#ffffff",
       });
-      removeGuides();
       canvas.toBlob((blob) => {
         if (!blob) {
           setExportError("Download failed. Please try again.");
@@ -156,6 +136,7 @@ export default function GeneratorPage() {
     } catch (err) {
       setExportError(err instanceof Error ? err.message : "Download failed. Please try again.");
     } finally {
+      if (removeGuides) removeGuides();
       setIsExporting(false);
     }
   };
@@ -167,29 +148,33 @@ export default function GeneratorPage() {
 
     try {
       setIsSharing(true);
-      let url = shareUrl;
+      const endpoint = "/api/invitations";
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+        cache: "no-store",
+      });
 
-      if (!url) {
-        const res = await fetch("/api/invitations", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
-
-        if (!res.ok) {
-          setShareError("Failed to create link. Please try again.");
-          return;
-        }
-
-        const result = (await res.json()) as { slug: string };
-        const origin = window.location.origin;
-        url = `${origin}/i/${result.slug}`;
-        setShareUrl(url);
+      if (!res.ok) {
+        const text = await res.text();
+        setShareError(`Failed to create link (${res.status}). ${text || ""}`.trim());
+        return;
       }
 
+      const result = (await res.json()) as { slug?: string; id?: string };
+      const slug = result.slug ?? result.id;
+      if (!slug) {
+        setShareError("Failed to create link. Please try again.");
+        return;
+      }
+      const origin = window.location.origin;
+      const url = `${origin}/i/${slug}`;
+      setShareUrl(url);
+
       return url;
-    } catch {
-      setShareError("Failed to create link. Please try again.");
+    } catch (err) {
+      setShareError(err instanceof Error ? err.message : "Failed to create link. Please try again.");
       return;
     } finally {
       setIsSharing(false);
@@ -352,19 +337,28 @@ export default function GeneratorPage() {
           ) : null}
           </div>
 
-          {shareUrl ? (
-            <div className="mb-6 flex flex-col gap-1">
-              <p className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Share Link</p>
-              <div className="text-[11px] text-slate-600 bg-white/70 border border-slate-200 rounded-lg px-3 py-2">
-                {shareUrl}
-              </div>
-              {shareCopied ? (
-                <p className="text-[10px] text-[#153273] font-bold uppercase tracking-widest">
-                  Link copied
-                </p>
-              ) : null}
-            </div>
-          ) : null}
+          <div className="mb-2 flex items-center gap-3">
+            <button
+              onClick={async () => {
+                const url = await buildShareUrl();
+                if (!url) return;
+                if (navigator.clipboard) {
+                  await navigator.clipboard.writeText(url);
+                  setShareCopied(true);
+                  setTimeout(() => setShareCopied(false), 2000);
+                }
+              }}
+              disabled={isSharing}
+              className="text-[10px] font-bold uppercase tracking-widest text-[#153273] border border-[#153273]/20 px-3 py-2 rounded-full hover:bg-[#153273]/5 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              Create Link
+            </button>
+            {shareCopied ? (
+              <p className="text-[10px] text-[#153273] font-bold uppercase tracking-widest">
+                Link copied
+              </p>
+            ) : null}
+          </div>
           {shareError ? (
             <p className="text-[11px] text-red-600 mb-4">{shareError}</p>
           ) : null}
