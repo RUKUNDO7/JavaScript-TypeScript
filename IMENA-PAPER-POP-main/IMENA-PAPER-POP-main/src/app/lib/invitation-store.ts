@@ -75,13 +75,3 @@ export async function getInvitationBySlug(slug: string): Promise<StoredInvitatio
 
   return null;
 }
-  try {
-    const content = await fs.readFile(path.join(dataDir, `${slug}.json`), "utf8");
-    return JSON.parse(content) as StoredInvitation;
-  } catch (err: unknown) {
-    if (typeof err === "object" && err && "code" in err && (err as { code: string }).code === "ENOENT") {
-      return null;
-    }
-    throw err;
-  }
-}
