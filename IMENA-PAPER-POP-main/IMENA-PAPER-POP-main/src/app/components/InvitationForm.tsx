@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { InvitationData } from "../types";
 
 interface FormProps {
@@ -7,13 +8,25 @@ interface FormProps {
 }
 
 export default function InvitationForm({ data, setData }: FormProps) {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const [dateError, setDateError] = useState<string | null>(null);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
+    if (name === "date") {
+      const today = new Date().toISOString().split("T")[0];
+      if (value && value < today) {
+        setDateError("Please choose today or a future date.");
+        return;
+      }
+      setDateError(null);
+    }
     setData((prev) => ({ ...prev, [name]: value }));
   };
 
   const labelStyle = "text-[10px] font-bold tracking-[0.2em] text-[#96712F] uppercase mb-2 block";
-  const inputStyle = "w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-sm focus:border-[#96712F] outline-none transition-all";
+  const inputStyle = "w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-sm focus:border-[#96712F] outline-none transition-all placeholder:text-slate-900 placeholder:opacity-100";
   const btnClass = (active: boolean) => 
     `flex-1 py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all border ${
       active ? 'bg-[#153273] text-white border-[#153273]' : 'bg-white text-slate-400 border-slate-200'
@@ -73,11 +86,34 @@ export default function InvitationForm({ data, setData }: FormProps) {
         />
       </div>
 
+      {/* 5. Agenda */}
+      <div>
+        <label className={labelStyle}>Agenda</label>
+        <textarea
+          name="agenda"
+          value={data.agenda}
+          onChange={handleChange}
+          className={inputStyle}
+          rows={3}
+          placeholder="e.g. Welcome • Speeches • Dinner • Dancing"
+        />
+      </div>
+
       {/* 5. Date & Time Row */}
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className={labelStyle}>Date</label>
-          <input name="date" type="date" value={data.date} onChange={handleChange} className={inputStyle} />
+          <input
+            name="date"
+            type="date"
+            value={data.date}
+            min={new Date().toISOString().split("T")[0]}
+            onChange={handleChange}
+            className={inputStyle}
+          />
+          {dateError ? (
+            <p className="mt-2 text-[11px] text-red-600">{dateError}</p>
+          ) : null}
         </div>
         <div>
           <label className={labelStyle}>Time</label>

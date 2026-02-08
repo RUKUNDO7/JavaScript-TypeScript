@@ -3,6 +3,7 @@ export interface InvitationData {
   subFamily: 'Wihogora' | 'Light' | 'Hope';
   title: string;
   slogan: string;
+  agenda: string;
   date: string;
   time: string;
   location: string;
