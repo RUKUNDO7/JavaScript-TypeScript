@@ -44,6 +44,11 @@ export async function saveInvitation(data: InvitationData): Promise<string> {
     JSON.stringify(record, null, 2),
     "utf8"
   );
+  await fs.writeFile(
+    path.join(dataDir, `${id}.json`),
+    JSON.stringify(record, null, 2),
+    "utf8"
+  );
 
   return slug;
 }

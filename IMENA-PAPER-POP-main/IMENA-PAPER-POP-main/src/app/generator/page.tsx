@@ -3,7 +3,7 @@
 import { useState } from "react";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
-import { Share2 } from "lucide-react";
+import { Download, Share2 } from "lucide-react";
 import InvitationForm from "../components/InvitationForm";
 import InvitationPreview from "../components/InvitationPreview";
 import { InvitationData } from "../types";
@@ -30,6 +30,7 @@ export default function GeneratorPage() {
   const [shareError, setShareError] = useState<string | null>(null);
   const [shareCopied, setShareCopied] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
+  const [isDownloadOpen, setIsDownloadOpen] = useState(false);
 
   const addBleedGuides = (target: HTMLElement) => {
     const overlay = document.createElement("div");
@@ -83,6 +84,33 @@ export default function GeneratorPage() {
       pdf.save("imena-invitation.pdf");
     } catch (err) {
       setExportError("Export failed. Please try again.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleDownloadImage = async () => {
+    if (isExporting) return;
+    const target = document.getElementById("printable-invitation");
+    if (!target) return;
+
+    try {
+      setIsExporting(true);
+      setExportError(null);
+      const removeGuides = addBleedGuides(target);
+      const canvas = await html2canvas(target, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+      });
+      removeGuides();
+      const dataUrl = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.href = dataUrl;
+      link.download = "imena-invitation.png";
+      link.click();
+    } catch (err) {
+      setExportError("Download failed. Please try again.");
     } finally {
       setIsExporting(false);
     }
@@ -191,13 +219,38 @@ export default function GeneratorPage() {
           <div className="mb-4 flex flex-col sm:flex-row sm:justify-between sm:items-end gap-3">
             <span className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Live Canvas</span>
             <div className="flex flex-wrap items-center gap-2">
-              <button 
-                onClick={handleExportPdf}
-                disabled={isExporting}
-                className="bg-[#153273] text-white px-6 py-2 rounded-full text-xs font-bold hover:scale-105 transition-all shadow-lg shadow-blue-900/20 disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                {isExporting ? "Exporting..." : "Export PDF"}
-              </button>
+              <div className="relative">
+                <button
+                  onClick={() => setIsDownloadOpen((prev) => !prev)}
+                  disabled={isExporting}
+                  className="bg-[#153273] text-white px-5 py-2 rounded-full text-xs font-bold hover:scale-105 transition-all shadow-lg shadow-blue-900/20 disabled:opacity-60 disabled:cursor-not-allowed inline-flex items-center gap-2"
+                >
+                  <Download size={14} />
+                  {isExporting ? "Downloading..." : "Download"}
+                </button>
+                {isDownloadOpen ? (
+                  <div className="absolute right-0 mt-2 w-44 rounded-xl border border-slate-200 bg-white shadow-lg overflow-hidden z-10">
+                    <button
+                      onClick={() => {
+                        setIsDownloadOpen(false);
+                        handleExportPdf();
+                      }}
+                      className="w-full text-left px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#153273] hover:bg-[#153273]/5"
+                    >
+                      Download PDF
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsDownloadOpen(false);
+                        handleDownloadImage();
+                      }}
+                      className="w-full text-left px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#153273] hover:bg-[#153273]/5"
+                    >
+                      Download Image
+                    </button>
+                  </div>
+                ) : null}
+              </div>
               <div className="relative group">
                 <button 
                   onClick={handleShare}
