@@ -30,6 +30,12 @@ export default function InvitationPreview({ data }: { data: InvitationData }) {
   };
 
   const style = familyStyles[data.subFamily];
+  const contentTextClass =
+    data.subFamily === "Hope" ? "text-white" : "text-[#153273]";
+  const mutedTextClass =
+    data.subFamily === "Hope" ? "text-white/90" : "text-[#153273]/90";
+  const subtleTextClass =
+    data.subFamily === "Hope" ? "text-white/80" : "text-[#153273]/80";
   const agendaItems = data.agenda
     .split(/\r?\n|•|,|;/g)
     .map((item) => item.trim())
@@ -66,31 +72,31 @@ export default function InvitationPreview({ data }: { data: InvitationData }) {
       <p className={`uppercase tracking-[0.4em] text-[9px] font-bold ${style.accent} mb-4`}>
         {data.subFamily} Family
       </p>
-      <p className={`uppercase tracking-[0.25em] text-[9px] font-bold opacity-70 ${style.accent} mb-6`}>
+      <p className={`uppercase tracking-[0.25em] text-[9px] font-bold ${subtleTextClass} mb-6`}>
         Invites You To
       </p>
 
       {/* 2. CENTERED CONTENT AREA */}
       <div className="flex-1 flex flex-col justify-center items-center max-w-sm">
         {/* Reduced Title Size from 6xl to 3xl/4xl */}
-        <h2 className={`text-3xl md:text-4xl ${style.font} italic mb-6 leading-tight`}>
+        <h2 className={`text-3xl md:text-4xl ${style.font} italic mb-6 leading-tight ${contentTextClass}`}>
           {data.title || (data.category === 'Birthdays' ? "Birthday Celebration" : "Family Announcement")}
         </h2>
 
         <div className={`w-10 h-[1px] ${data.subFamily === 'Hope' ? 'bg-white/30' : 'bg-black/10'} mb-6`} />
 
         {/* User-generated Description / Wishes */}
-        <p className={`text-base md:text-lg leading-relaxed italic opacity-85 ${style.font} max-w-[280px]`}>
+        <p className={`text-base md:text-lg leading-relaxed italic ${mutedTextClass} ${style.font} max-w-[280px]`}>
           "{toSentenceCase(data.slogan || (data.category === 'Birthdays' ? "Wishing you a year of infinite blessings." : "United in Celebration."))}"
         </p>
 
         {/* Agenda */}
         {agendaItems.length ? (
           <div className="mt-4 max-w-[280px]">
-            <p className={`text-[10px] font-bold uppercase tracking-[0.3em] opacity-70 ${style.font}`}>
+            <p className={`text-[10px] font-bold uppercase tracking-[0.3em] ${subtleTextClass} ${style.font}`}>
               Agenda
             </p>
-            <ul className={`mt-2 text-[12px] italic tracking-[0.02em] opacity-80 ${style.font} space-y-1 list-disc list-inside`}>
+            <ul className={`mt-2 text-[12px] italic tracking-[0.02em] ${mutedTextClass} ${style.font} space-y-1 list-disc list-inside`}>
               {agendaItems.map((item, index) => (
                 <li key={`${item}-${index}`}>{toSentenceCase(item)}</li>
               ))}
@@ -101,10 +107,10 @@ export default function InvitationPreview({ data }: { data: InvitationData }) {
         {/* Additional Notes */}
         {data.additionalNotes ? (
           <div className="mt-4 max-w-[280px]">
-            <p className={`text-[10px] font-bold uppercase tracking-[0.3em] opacity-70 ${style.font}`}>
+            <p className={`text-[10px] font-bold uppercase tracking-[0.3em] ${subtleTextClass} ${style.font}`}>
               Notes
             </p>
-            <ul className={`mt-2 text-[12px] italic tracking-[0.02em] opacity-80 ${style.font} list-disc list-inside`}>
+            <ul className={`mt-2 text-[12px] italic tracking-[0.02em] ${mutedTextClass} ${style.font} list-disc list-inside`}>
               <li>{toSentenceCase(data.additionalNotes)}</li>
             </ul>
           </div>
@@ -113,19 +119,19 @@ export default function InvitationPreview({ data }: { data: InvitationData }) {
         {/* Logistics for Announcements */}
         {data.category === 'Announcements' && data.date && (
           <div className="mt-10 space-y-2">
-            <p className="font-bold tracking-tighter text-xl">
+            <p className={`font-bold tracking-tighter text-xl ${contentTextClass}`}>
               {new Date(data.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
             </p>
 
             {(data.time || data.location) ? (
-              <div className="flex items-center justify-center gap-2 text-[10px] uppercase tracking-[0.2em] font-bold opacity-70">
+              <div className={`flex items-center justify-center gap-2 text-[10px] uppercase tracking-[0.2em] font-bold ${mutedTextClass}`}>
                 {data.time ? (
-                  <span className={`px-3 py-1 rounded-full ${data.subFamily === "Hope" ? "bg-white/10 text-white" : "bg-[#153273]/10 text-[#153273]"}`}>
+                  <span className={`px-3 py-1 rounded-full ${data.subFamily === "Hope" ? "bg-white/15 text-white" : "bg-[#153273]/15 text-[#153273]"}`}>
                     {formatTime(data.time)}
                   </span>
                 ) : null}
                 {data.location ? (
-                  <span className={`px-3 py-1 rounded-full flex items-center gap-1 ${data.subFamily === "Hope" ? "bg-white/10 text-white" : "bg-[#153273]/10 text-[#153273]"}`}>
+                  <span className={`px-3 py-1 rounded-full flex items-center gap-1 ${data.subFamily === "Hope" ? "bg-white/15 text-white" : "bg-[#153273]/15 text-[#153273]"}`}>
                     <MapPin size={12} />
                     {data.location}
                   </span>
@@ -139,7 +145,7 @@ export default function InvitationPreview({ data }: { data: InvitationData }) {
       {/* 3. FOOTER WITH OFFICIAL FAMILY SLOGAN */}
       <div className="mt-auto pt-8 flex flex-col items-center">
         <div className={`w-8 h-[1px] ${style.accent} opacity-30 mb-4`} />
-        <p className={`text-[10px] tracking-[0.12em] italic max-w-[300px] leading-loose opacity-70 mb-2`}>
+        <p className={`text-[10px] tracking-[0.12em] italic max-w-[300px] leading-loose ${mutedTextClass} mb-2`}>
           "{toSentenceCase(style.officialSlogan)}"
         </p>
         <p className={`text-xl ${style.font} italic ${style.accent}`}>
