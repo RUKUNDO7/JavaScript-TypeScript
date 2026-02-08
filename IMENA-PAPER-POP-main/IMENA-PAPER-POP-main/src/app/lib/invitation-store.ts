@@ -48,7 +48,33 @@ export async function saveInvitation(data: InvitationData): Promise<string> {
   return slug;
 }
 
+function isUuid(value: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+}
+
+async function readRecordByFilename(filename: string): Promise<StoredInvitation | null> {
+  try {
+    const content = await fs.readFile(path.join(dataDir, filename), "utf8");
+    return JSON.parse(content) as StoredInvitation;
+  } catch (err: unknown) {
+    if (typeof err === "object" && err && "code" in err && (err as { code: string }).code === "ENOENT") {
+      return null;
+    }
+    throw err;
+  }
+}
+
 export async function getInvitationBySlug(slug: string): Promise<StoredInvitation | null> {
+  const bySlug = await readRecordByFilename(`${slug}.json`);
+  if (bySlug) return bySlug;
+
+  if (isUuid(slug)) {
+    const byId = await readRecordByFilename(`${slug}.json`);
+    if (byId) return byId;
+  }
+
+  return null;
+}
   try {
     const content = await fs.readFile(path.join(dataDir, `${slug}.json`), "utf8");
     return JSON.parse(content) as StoredInvitation;

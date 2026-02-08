@@ -7,3 +7,5 @@ export default function ShortInviteRedirect({
 }) {
   redirect(`/invitation/${params.id}`);
 }
+
+export const dynamic = "force-dynamic";

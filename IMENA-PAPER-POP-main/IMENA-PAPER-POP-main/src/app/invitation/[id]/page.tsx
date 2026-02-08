@@ -6,6 +6,7 @@ import { getInvitationBySlug } from "@/app/lib/invitation-store";
 import ShareBar from "./share-bar";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export default async function InvitationPage({
   params,

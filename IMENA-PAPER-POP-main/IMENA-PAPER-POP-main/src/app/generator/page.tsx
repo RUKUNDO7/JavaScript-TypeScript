@@ -29,6 +29,7 @@ export default function GeneratorPage() {
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [shareError, setShareError] = useState<string | null>(null);
   const [shareCopied, setShareCopied] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
 
   const addBleedGuides = (target: HTMLElement) => {
     const overlay = document.createElement("div");
@@ -62,6 +63,7 @@ export default function GeneratorPage() {
 
     try {
       setIsExporting(true);
+      setExportError(null);
       const removeGuides = addBleedGuides(target);
 
       const canvas = await html2canvas(target, {
@@ -72,18 +74,15 @@ export default function GeneratorPage() {
       removeGuides();
       const imgData = canvas.toDataURL("image/png");
 
-      const pdf = new jsPDF({ orientation: "p", unit: "pt", format: "a4" });
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-
-      const imgWidth = pageWidth;
-      const imgHeight = (canvas.height * pageWidth) / canvas.width;
-
-      const y = imgHeight < pageHeight ? (pageHeight - imgHeight) / 2 : 0;
-      pdf.addImage(imgData, "PNG", 0, y, imgWidth, imgHeight);
+      const pdf = new jsPDF({
+        orientation: "p",
+        unit: "px",
+        format: [canvas.width, canvas.height],
+      });
+      pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
       pdf.save("imena-invitation.pdf");
     } catch (err) {
-      window.print();
+      setExportError("Export failed. Please try again.");
     } finally {
       setIsExporting(false);
     }
@@ -248,9 +247,12 @@ export default function GeneratorPage() {
                   title="Share on Instagram"
                 >
                   <InstagramIcon size={16} />
-                </button>
-              </div>
+              </button>
             </div>
+          </div>
+          {exportError ? (
+            <p className="mb-3 text-[11px] text-red-600">{exportError}</p>
+          ) : null}
           </div>
 
           {shareUrl ? (
