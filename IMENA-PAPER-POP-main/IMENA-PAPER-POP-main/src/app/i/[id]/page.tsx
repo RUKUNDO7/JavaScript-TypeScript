@@ -1,11 +1,12 @@
 import { redirect } from "next/navigation";
 
-export default function ShortInviteRedirect({
+export default async function ShortInviteRedirect({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  redirect(`/invitation/${params.id}`);
+  const { id } = await params;
+  redirect(`/invitation/${id}`);
 }
 
 export const dynamic = "force-dynamic";

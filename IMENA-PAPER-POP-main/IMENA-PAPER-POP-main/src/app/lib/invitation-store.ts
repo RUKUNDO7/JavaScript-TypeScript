@@ -1,8 +1,7 @@
 import "server-only";
-import { promises as fs } from "fs";
-import path from "path";
 import crypto from "crypto";
 import { InvitationData } from "@/app/types";
+import { pool } from "@/app/lib/db";
 
 export type StoredInvitation = {
   id: string;
@@ -11,11 +10,7 @@ export type StoredInvitation = {
   data: InvitationData;
 };
 
-const dataDir = path.join(process.cwd(), "data", "invitations");
-
-async function ensureDir() {
-  await fs.mkdir(dataDir, { recursive: true });
-}
+const SLUG_ATTEMPTS = 3;
 
 function slugify(input: string) {
   const base = input
@@ -26,77 +21,77 @@ function slugify(input: string) {
   return base || "invitation";
 }
 
+type InvitationRow = {
+  id: string;
+  slug: string;
+  created_at: Date;
+  data: InvitationData;
+};
+
+function rowToRecord(row: InvitationRow): StoredInvitation {
+  return {
+    id: row.id,
+    slug: row.slug,
+    createdAt: row.created_at.toISOString(),
+    data: row.data,
+  };
+}
+
+async function insertInvitation(
+  id: string,
+  slug: string,
+  data: InvitationData
+): Promise<StoredInvitation> {
+  const result = await pool.query<InvitationRow>(
+    `insert into invitations (id, slug, data)
+     values ($1, $2, $3)
+     returning id, slug, created_at, data`,
+    [id, slug, data]
+  );
+  return rowToRecord(result.rows[0]);
+}
+
 export async function saveInvitation(data: InvitationData): Promise<string> {
   const id = crypto.randomUUID();
-  const shortId = crypto.randomBytes(3).toString("hex");
   const slugBase = slugify(data.title || data.slogan || "");
-  const slug = `${slugBase}-${shortId}`;
-  const record: StoredInvitation = {
-    id,
-    slug,
-    createdAt: new Date().toISOString(),
-    data,
-  };
+  let lastError: unknown;
 
-  await ensureDir();
-  await fs.writeFile(
-    path.join(dataDir, `${slug}.json`),
-    JSON.stringify(record, null, 2),
-    "utf8"
-  );
-  await fs.writeFile(
-    path.join(dataDir, `${id}.json`),
-    JSON.stringify(record, null, 2),
-    "utf8"
-  );
+  for (let attempt = 0; attempt < SLUG_ATTEMPTS; attempt += 1) {
+    const shortId = crypto.randomBytes(3).toString("hex");
+    const slug = `${slugBase}-${shortId}`;
+    try {
+      await insertInvitation(id, slug, data);
+      return slug;
+    } catch (err: unknown) {
+      if (typeof err === "object" && err && "code" in err && (err as { code: string }).code === "23505") {
+        lastError = err;
+        continue;
+      }
+      throw err;
+    }
+  }
 
-  return slug;
+  throw lastError ?? new Error("Failed to create a unique invitation slug.");
 }
 
 function isUuid(value: string) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 }
 
-async function readRecordByFilename(filename: string): Promise<StoredInvitation | null> {
-  try {
-    const content = await fs.readFile(path.join(dataDir, filename), "utf8");
-    return JSON.parse(content) as StoredInvitation;
-  } catch (err: unknown) {
-    if (typeof err === "object" && err && "code" in err && (err as { code: string }).code === "ENOENT") {
-      return null;
-    }
-    throw err;
-  }
-}
-
-async function findRecordByScan(token: string): Promise<StoredInvitation | null> {
-  try {
-    const files = await fs.readdir(dataDir);
-    for (const file of files) {
-      if (!file.endsWith(".json")) continue;
-      const content = await fs.readFile(path.join(dataDir, file), "utf8");
-      const record = JSON.parse(content) as StoredInvitation;
-      if (record.id === token || record.slug === token) {
-        return record;
-      }
-    }
-    return null;
-  } catch (err: unknown) {
-    if (typeof err === "object" && err && "code" in err && (err as { code: string }).code === "ENOENT") {
-      return null;
-    }
-    throw err;
-  }
-}
-
 export async function getInvitationBySlug(slug: string): Promise<StoredInvitation | null> {
-  const bySlug = await readRecordByFilename(`${slug}.json`);
-  if (bySlug) return bySlug;
-
   if (isUuid(slug)) {
-    const byId = await readRecordByFilename(`${slug}.json`);
-    if (byId) return byId;
+    const byId = await pool.query<InvitationRow>(
+      `select id, slug, created_at, data from invitations where id = $1`,
+      [slug]
+    );
+    if (byId.rowCount) return rowToRecord(byId.rows[0]);
   }
 
-  return findRecordByScan(slug);
+  const bySlug = await pool.query<InvitationRow>(
+    `select id, slug, created_at, data from invitations where slug = $1`,
+    [slug]
+  );
+  if (bySlug.rowCount) return rowToRecord(bySlug.rows[0]);
+
+  return null;
 }

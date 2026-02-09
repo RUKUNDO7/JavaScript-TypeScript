@@ -16,6 +16,25 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Postgres Setup (Required for Share Links)
+
+Set the `DATABASE_URL` environment variable to your Postgres connection string, for example:
+
+```bash
+DATABASE_URL="postgresql://user:password@localhost:5432/imena"
+```
+
+Create the required table:
+
+```sql
+create table if not exists invitations (
+  id uuid primary key,
+  slug text unique not null,
+  created_at timestamptz not null default now(),
+  data jsonb not null
+);
+```
+
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.

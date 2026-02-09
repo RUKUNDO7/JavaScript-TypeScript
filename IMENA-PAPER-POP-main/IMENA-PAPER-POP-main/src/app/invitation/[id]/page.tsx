@@ -11,9 +11,10 @@ export const dynamic = "force-dynamic";
 export default async function InvitationPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const record = await getInvitationBySlug(params.id);
+  const { id } = await params;
+  const record = await getInvitationBySlug(id);
 
   if (!record) {
     notFound();

@@ -11,7 +11,7 @@ export default function InvitationPreview({ data }: { data: InvitationData }) {
       accent: "text-[#96712F]",
       border: "border-[rgba(150,113,47,0.3)]",
       font: "font-serif",
-      officialSlogan: "ndi umurinzi w' igihango, usigasira ibyagezwemo, akirinda amacakubiri, akimakaza amahoro, kuko ari we wihogora. Rooted in love, rising in life, resilience is our might"
+      officialSlogan: "Ndi umurinzi w' igihango, usigasira ibyagezwemo, akirinda amacakubiri, akimakaza amahoro, kuko ari we Wihogora. Rooted in love, rising in life, resilience is our might."
     },
     Light: {
       container: "bg-white text-slate-800",

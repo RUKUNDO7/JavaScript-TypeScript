@@ -337,28 +337,13 @@ export default function GeneratorPage() {
           ) : null}
           </div>
 
-          <div className="mb-2 flex items-center gap-3">
-            <button
-              onClick={async () => {
-                const url = await buildShareUrl();
-                if (!url) return;
-                if (navigator.clipboard) {
-                  await navigator.clipboard.writeText(url);
-                  setShareCopied(true);
-                  setTimeout(() => setShareCopied(false), 2000);
-                }
-              }}
-              disabled={isSharing}
-              className="text-[10px] font-bold uppercase tracking-widest text-[#153273] border border-[#153273]/20 px-3 py-2 rounded-full hover:bg-[#153273]/5 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
-            >
-              Create Link
-            </button>
-            {shareCopied ? (
+          {shareCopied ? (
+            <div className="mb-2">
               <p className="text-[10px] text-[#153273] font-bold uppercase tracking-widest">
                 Link copied
               </p>
-            ) : null}
-          </div>
+            </div>
+          ) : null}
           {shareError ? (
             <p className="text-[11px] text-red-600 mb-4">{shareError}</p>
           ) : null}

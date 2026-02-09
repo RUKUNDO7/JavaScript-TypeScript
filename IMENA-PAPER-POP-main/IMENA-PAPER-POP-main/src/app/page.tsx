@@ -124,9 +124,6 @@ export default function Home() {
               Open Invitation Form
               <CheckCircle2 size={18} className="group-hover:translate-x-1 transition-transform" />
             </Link>
-            <Link href="/generator" className="text-[#153273] font-bold border-2 border-[#153273]/10 px-12 py-5 rounded-full hover:bg-[#153273]/5 transition-all uppercase tracking-widest text-xs">
-              View Live Preview
-            </Link>
           </div>
         </div>
       </section>
